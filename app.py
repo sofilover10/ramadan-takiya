@@ -91,7 +91,6 @@ uploaded_file = st.file_uploader("📂 قم برفع ملف الإكسل (Excel)
 if uploaded_file:
     try:
         df = pd.read_excel(uploaded_file)
-        # تنظيف أسماء الأعمدة من المسافات الزائدة
         df.columns = df.columns.str.strip()
 
         if 'عدد الافراد' in df.columns:
@@ -142,9 +141,6 @@ if uploaded_file:
                 sheet_name = 'التوزيع النهائي'
                 export_cols = [c for c in ['الاسم رباعي', 'رقم الهوية', 'رقم الجوال', 'عدد الافراد', 'عدد الوجبات المستحقة', 'اسم الزوج/ـة', 'رقم هوية الزوج/ـة', 'ملاحظات الحالة', 'اسم مندوب المربع', 'اسم المخيم', 'اسم مندوب المخيم', 'ملاحظات'] if c in df.columns]
                 
-                if not export_cols:
-                    export_cols = df.columns.tolist()
-
                 df_final = df[export_cols]
                 df_final.to_excel(writer, index=False, sheet_name=sheet_name)
                 
@@ -160,15 +156,14 @@ if uploaded_file:
                     worksheet.set_column(col_num, col_num, 20)
 
                 try:
-                    if 'عدد الوجبات المستحقة' in df_final.columns:
-                        meal_idx = df_final.columns.get_loc('عدد الوجبات المستحقة')
-                        col_char = chr(ord('A') + meal_idx)
-                        max_row = len(df_final) + 1
-                        
-                        worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '>=', 'value': 3, 'format': workbook.add_format({'bg_color': '#c8e6c9', 'font_color': '#006100', 'border': 1, 'align': 'center'})})
-                        worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '=', 'value': 2, 'format': workbook.add_format({'bg_color': '#ffeb9c', 'font_color': '#9c6500', 'border': 1, 'align': 'center'})})
-                        worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '=', 'value': 1, 'format': cell_fmt})
-                except Exception as e:
+                    meal_idx = df_final.columns.get_loc('عدد الوجبات المستحقة')
+                    col_char = chr(ord('A') + meal_idx)
+                    max_row = len(df_final) + 1
+                    
+                    worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '>=', 'value': 3, 'format': workbook.add_format({'bg_color': '#c8e6c9', 'font_color': '#006100', 'border': 1, 'align': 'center'})})
+                    worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '=', 'value': 2, 'format': workbook.add_format({'bg_color': '#ffeb9c', 'font_color': '#9c6500', 'border': 1, 'align': 'center'})})
+                    worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '=', 'value': 1, 'format': cell_fmt})
+                except:
                     pass
 
             st.download_button(
@@ -179,103 +174,22 @@ if uploaded_file:
             )
 
         else:
-            st.error("⚠️ الملف لا يحتوي على عمود 'عدد الافراد'. تأكد من صحة الملف.")
+            st.error("⚠️ الملف لا يحتوي على عمود 'عدد الافراد'.")
 
     except Exception as e:
-        st.error(f"حدث خطأ أثناء معالجة الملف: {e}")
+        st.error(f"حدث خطأ: {e}")
 
-# --- 6. الفوتر المحدث (التصميم الاحترافي) ---
+# --- 6. الفوتر المحدث (جوال فقط) ---
 st.markdown("---")
-
-footer_html = """
-<style>
-    /* حاوية الفوتر */
-    .footer-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 2rem;
-        margin-bottom: 2rem;
-    }
+st.markdown("""
+<div style="text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 10px; margin-top: 20px; border: 1px solid #ddd;">
+    <h3 style="color: #1e3c72; font-family: 'Cairo', sans-serif;">جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026</h3>
+    <p style="color: #666; margin-bottom: 20px;">تم التطوير لخدمة لجنة فش فرش الشمالي</p>
     
-    /* بطاقة المطور */
-    .dev-card {
-        background: white;
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        text-align: center;
-        width: 100%;
-        max-width: 700px;
-        border: 1px solid #eee;
-    }
-    
-    .dev-title {
-        color: #1e3c72;
-        font-family: 'Cairo', sans-serif;
-        font-weight: 700;
-        margin-bottom: 5px;
-        font-size: 1.3rem;
-    }
-    
-    .dev-subtitle {
-        color: #777;
-        font-size: 0.9rem;
-        margin-bottom: 25px;
-    }
-    
-    /* أزرار التواصل */
-    .contact-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-    
-    .btn-contact {
-        display: flex;
-        align-items: center;
-        padding: 12px 25px;
-        border-radius: 50px;
-        text-decoration: none !important;
-        color: white !important;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    
-    .btn-contact:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    }
-    
-    .btn-whatsapp {
-        background: linear-gradient(45deg, #25D366, #128C7E);
-    }
-    
-    .btn-phone {
-        background: linear-gradient(45deg, #1e3c72, #2a5298);
-    }
-    
-    .icon { margin-left: 10px; font-size: 1.2rem; }
-</style>
-
-<div class="footer-container">
-    <div class="dev-card">
-        <h3 class="dev-title">جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026</h3>
-        <p class="dev-subtitle">تم التطوير لخدمة لجنة فش فرش الشمالي</p>
-        
-        <div class="contact-buttons">
-            <a href="https://wa.me/972567100000" target="_blank" class="btn-contact btn-whatsapp">
-                <span class="icon">💬</span> تواصل واتساب
-            </a>
-            
-            <a href="tel:0567100000" class="btn-contact btn-phone">
-                <span class="icon">📞</span> اتصال هاتفي
-            </a>
-        </div>
+    <div style="display: flex; justify-content: center;">
+        <a href="tel:0567100000" style="text-decoration: none; background-color: #1e3c72; color: white; padding: 10px 30px; border-radius: 30px; font-weight: bold; display: flex; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <span style="font-size: 1.2rem; margin-left: 8px;">📞</span> جوال: 0567100000
+        </a>
     </div>
 </div>
-"""
-
-st.markdown(footer_html, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
