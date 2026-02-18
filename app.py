@@ -4,7 +4,7 @@ import io
 
 # --- 1. إعدادات الصفحة ---
 st.set_page_config(
-    page_title="نظام توزيع التكية - لجنة فش فرش الشمالي",
+    page_title="توزيع التكية - لجنة فش فرش الشمالي",
     page_icon="🌙",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -20,15 +20,16 @@ st.markdown("""
     /* تنسيق الهيدر */
     .main-header {
         background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
-        padding: 20px;
+        padding: 25px;
         border-radius: 15px;
         color: white;
         text-align: center;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         margin-bottom: 25px;
     }
-    .main-header h1 { margin: 0; font-size: 2.2rem; font-weight: bold; }
-    .main-header p { margin: 5px 0 0; opacity: 0.9; font-size: 1.1rem; }
+    .main-header h1 { margin: 0; font-size: 2.2rem; font-weight: bold; text-shadow: 2px 2px 4px #000000; }
+    .dedication { font-size: 1.2rem; color: #ffeb3b; margin-top: 10px; font-weight: bold; }
+    .developer { margin-top: 15px; opacity: 0.8; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; display: inline-block;}
 
     /* تنسيق البطاقات */
     .metric-card {
@@ -54,11 +55,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. الهيدر ---
+# --- 3. الهيدر الجديد ---
 st.markdown("""
 <div class="main-header">
-    <h1>🌙 نظام توزيع التكية - مخيم الكرامة</h1>
-    <p>الإدارة والتطوير: م. عبدالله حميد الصوفي</p>
+    <h1>🌙 نظام توزيع التكية - لجنة فش فرش الشمالي</h1>
+    <div class="dedication">بجهد مبارك من الأخ الفاضل إبراهيم الشاعر (أبو عمر)</div>
+    <div class="developer">الإدارة والتطوير: م. عبدالله حميد الصوفي</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -66,7 +68,7 @@ st.markdown("""
 st.sidebar.header("⚙️ ضبط معايير التوزيع")
 st.sidebar.markdown("قم بتغيير الأرقام أدناه لتحديد من يستحق وجبة، وجبتين، أو ثلاث.")
 
-# --- قسم الوجبتين (يحدد تلقائياً نهاية الوجبة الواحدة) ---
+# --- قسم الوجبتين ---
 st.sidebar.markdown("---")
 st.sidebar.subheader("1️⃣ فئة الوجبتين (2)")
 limit_2_meals = st.sidebar.number_input(
@@ -74,7 +76,6 @@ limit_2_meals = st.sidebar.number_input(
     min_value=2, value=7, step=1,
     help="أي عائلة عدد أفرادها يساوي هذا الرقم أو أكثر ستأخذ وجبتين."
 )
-# توضيح مباشر للمستخدم
 st.sidebar.info(f"✅ إذن: العائلات من 1 إلى {limit_2_meals - 1} أفراد تأخذ **وجبة واحدة**.")
 
 # --- قسم الـ 3 وجبات ---
@@ -85,7 +86,6 @@ limit_3_meals = st.sidebar.number_input(
     min_value=limit_2_meals + 1, value=11, step=1,
     help="أي عائلة تصل لهذا العدد ستأخذ 3 وجبات."
 )
-# توضيح مباشر للمستخدم
 st.sidebar.info(f"✅ إذن: العائلات من {limit_2_meals} إلى {limit_3_meals - 1} أفراد تأخذ **وجبتين**.")
 st.sidebar.success(f"🌟 العائلات {limit_3_meals} أفراد فأكثر تأخذ **3 وجبات**.")
 
@@ -110,7 +110,7 @@ if uploaded_file:
 
         if 'عدد الافراد' in df.columns:
             
-            # دالة الحساب بناءً على المدخلات الجديدة
+            # دالة الحساب
             def calculate_meals(row):
                 try:
                     size = int(row['عدد الافراد'])
@@ -170,9 +170,7 @@ if uploaded_file:
             
             # تجهيز الجدول للعرض
             wanted_columns = ['الاسم رباعي', 'رقم الهوية', 'رقم الجوال', 'عدد الافراد', 'عدد الوجبات المستحقة', 'ملاحظات']
-            # إضافة باقي الأعمدة الموجودة في الملف الأصلي إذا لزم الأمر
             existing_cols = [c for c in wanted_columns if c in df.columns]
-            # إذا أردت عرض كل الأعمدة مع التركيز على الوجبات
             cols = existing_cols + [c for c in df.columns if c not in existing_cols]
             st.dataframe(df[cols].head(10), use_container_width=True)
 
@@ -180,7 +178,7 @@ if uploaded_file:
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 sheet_name = 'التوزيع النهائي'
-                # تصدير الأعمدة المختارة فقط ليكون الملف نظيفاً، أو استبدلها بـ df لتصدير الكل
+                # تصدير الأعمدة المهمة
                 export_cols = [c for c in ['الاسم رباعي', 'رقم الهوية', 'رقم الجوال', 'عدد الافراد', 'عدد الوجبات المستحقة', 'اسم الزوج/ـة', 'رقم هوية الزوج/ـة', 'ملاحظات الحالة', 'اسم مندوب المربع', 'اسم المخيم', 'اسم مندوب المخيم', 'ملاحظات'] if c in df.columns]
                 
                 df_final = df[export_cols]
@@ -217,7 +215,7 @@ if uploaded_file:
             st.download_button(
                 label="📥 تحميل الكشف (Excel) جاهز وملون",
                 data=output.getvalue(),
-                file_name=f'كشف_توزيع_الكرامة_{grand_total}_وجبة.xlsx',
+                file_name=f'كشف_توزيع_الشمالي_{grand_total}_وجبة.xlsx',
                 mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )
 
@@ -231,6 +229,6 @@ if uploaded_file:
 st.markdown("""
 <div class="footer">
     جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026 <br>
-    تم التطوير لخدمة مخيم الكرامة
+    تم التطوير لخدمة لجنة فش فرش الشمالي
 </div>
 """, unsafe_allow_html=True)
