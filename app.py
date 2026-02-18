@@ -142,7 +142,6 @@ if uploaded_file:
                 sheet_name = 'التوزيع النهائي'
                 export_cols = [c for c in ['الاسم رباعي', 'رقم الهوية', 'رقم الجوال', 'عدد الافراد', 'عدد الوجبات المستحقة', 'اسم الزوج/ـة', 'رقم هوية الزوج/ـة', 'ملاحظات الحالة', 'اسم مندوب المربع', 'اسم المخيم', 'اسم مندوب المخيم', 'ملاحظات'] if c in df.columns]
                 
-                # إذا كانت القائمة فارغة (لأن الأسماء في الملف مختلفة)، نستخدم كل الأعمدة
                 if not export_cols:
                     export_cols = df.columns.tolist()
 
@@ -161,19 +160,15 @@ if uploaded_file:
                     worksheet.set_column(col_num, col_num, 20)
 
                 try:
-                    # التنسيق الشرطي للألوان في ملف الإكسل
                     if 'عدد الوجبات المستحقة' in df_final.columns:
                         meal_idx = df_final.columns.get_loc('عدد الوجبات المستحقة')
-                        col_char = chr(ord('A') + meal_idx) # يفترض أن عدد الأعمدة أقل من 26
-                        # إذا كان أكثر من 26 عمود، هذه الطريقة تحتاج تعديل، لكنها تعمل في الغالب
-                        
+                        col_char = chr(ord('A') + meal_idx)
                         max_row = len(df_final) + 1
                         
                         worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '>=', 'value': 3, 'format': workbook.add_format({'bg_color': '#c8e6c9', 'font_color': '#006100', 'border': 1, 'align': 'center'})})
                         worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '=', 'value': 2, 'format': workbook.add_format({'bg_color': '#ffeb9c', 'font_color': '#9c6500', 'border': 1, 'align': 'center'})})
                         worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '=', 'value': 1, 'format': cell_fmt})
                 except Exception as e:
-                    # لا نوقف التحميل إذا فشل التنسيق الشرطي
                     pass
 
             st.download_button(
@@ -255,4 +250,32 @@ footer_html = """
     }
     
     .btn-whatsapp {
-        background
+        background: linear-gradient(45deg, #25D366, #128C7E);
+    }
+    
+    .btn-phone {
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+    }
+    
+    .icon { margin-left: 10px; font-size: 1.2rem; }
+</style>
+
+<div class="footer-container">
+    <div class="dev-card">
+        <h3 class="dev-title">جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026</h3>
+        <p class="dev-subtitle">تم التطوير لخدمة لجنة فش فرش الشمالي</p>
+        
+        <div class="contact-buttons">
+            <a href="https://wa.me/972567100000" target="_blank" class="btn-contact btn-whatsapp">
+                <span class="icon">💬</span> تواصل واتساب
+            </a>
+            
+            <a href="tel:0567100000" class="btn-contact btn-phone">
+                <span class="icon">📞</span> اتصال هاتفي
+            </a>
+        </div>
+    </div>
+</div>
+"""
+
+st.markdown(footer_html, unsafe_allow_html=True)
