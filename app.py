@@ -179,17 +179,11 @@ if uploaded_file:
     except Exception as e:
         st.error(f"حدث خطأ: {e}")
 
-# --- 6. الفوتر المحدث (جوال فقط) ---
+# --- 6. الفوتر ---
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 10px; margin-top: 20px; border: 1px solid #ddd;">
     <h3 style="color: #1e3c72; font-family: 'Cairo', sans-serif;">جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026</h3>
-    <p style="color: #666; margin-bottom: 20px;">تم التطوير لخدمة لجنة فش فرش الشمالي</p>
-    
-    <div style="display: flex; justify-content: center;">
-        <a href="tel:0567100000" style="text-decoration: none; background-color: #1e3c72; color: white; padding: 10px 30px; border-radius: 30px; font-weight: bold; display: flex; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <span style="font-size: 1.2rem; margin-left: 8px;">📞</span> جوال: 0567100000
-        </a>
-    </div>
+    <p style="color: #666; margin: 0;">تم التطوير لخدمة لجنة فش فرش الشمالي</p>
 </div>
 """, unsafe_allow_html=True)
