@@ -10,123 +10,97 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. التصميم والألوان (CSS الاحترافي) ---
+# --- 2. تنسيقات CSS الاحترافية ---
 st.markdown("""
 <style>
-    /* استيراد خط عربي أنيق */
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-
-    html, body, [class*="css"] {
-        font-family: 'Cairo', sans-serif;
-        direction: rtl;
-    }
-
-    /* خلفية التطبيق */
-    .stApp {
-        background-color: #f4f6f9;
-    }
-
-    /* تنسيق العناوين */
+    html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; }
+    .stApp { background-color: #f0f2f6; }
+    
+    /* تنسيق الهيدر */
     .main-header {
-        text-align: center;
-        color: #1e3d59;
-        padding: 20px;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
-        border-bottom: 4px solid #ff6e40;
-    }
-    
-    .main-header h1 {
-        color: #1e3d59;
-        font-weight: 800;
-        font-size: 32px;
-        margin: 0;
-    }
-    
-    .main-header h3 {
-        color: #6c757d;
-        font-size: 16px;
-        margin-top: 5px;
-    }
-
-    /* تنسيق بطاقات الإحصائيات الملونة */
-    .stat-card {
+        background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
         padding: 20px;
         border-radius: 15px;
         color: white;
         text-align: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-        transition: transform 0.3s;
-        margin-bottom: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
     }
-    .stat-card:hover {
-        transform: translateY(-5px);
-    }
-    .stat-card h2 {
-        font-size: 36px;
-        margin: 0;
-        font-weight: bold;
-    }
-    .stat-card p {
-        font-size: 18px;
-        margin: 0;
-        opacity: 0.9;
-    }
+    .main-header h1 { margin: 0; font-size: 2.2rem; font-weight: bold; }
+    .main-header p { margin: 5px 0 0; opacity: 0.9; font-size: 1.1rem; }
 
-    /* ألوان البطاقات */
-    .bg-total { background: linear-gradient(135deg, #d32f2f, #ef5350); } /* أحمر للاجمالي */
-    .bg-families { background: linear-gradient(135deg, #1976d2, #42a5f5); } /* أزرق للعائلات */
-    .bg-meals { background: linear-gradient(135deg, #388e3c, #66bb6a); } /* أخضر للوجبات */
-    .bg-reserve { background: linear-gradient(135deg, #fbc02d, #ffeb3b); color: #333 !important; } /* أصفر للاحتياطي */
-
-    /* تذييل الصفحة */
-    .footer {
-        text-align: center;
-        margin-top: 50px;
+    /* تنسيق البطاقات */
+    .metric-card {
+        background: white;
         padding: 20px;
-        color: #666;
-        font-size: 14px;
-        border-top: 1px solid #ddd;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        text-align: center;
+        border-top: 5px solid #ddd;
+        transition: transform 0.2s;
     }
+    .metric-card:hover { transform: translateY(-5px); }
+    .metric-value { font-size: 2.5rem; font-weight: bold; color: #333; }
+    .metric-label { font-size: 1rem; color: #666; margin-bottom: 5px; }
+    
+    /* ألوان الحدود العلوية للبطاقات */
+    .border-red { border-color: #e74c3c; }
+    .border-blue { border-color: #3498db; }
+    .border-green { border-color: #2ecc71; }
+    .border-orange { border-color: #f39c12; }
+
+    .footer { text-align: center; margin-top: 40px; padding: 20px; color: #777; font-size: 0.9rem; border-top: 1px solid #e0e0e0; }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. واجهة العرض (Header) ---
+# --- 3. الهيدر ---
 st.markdown("""
 <div class="main-header">
     <h1>🌙 نظام توزيع التكية - مخيم الكرامة</h1>
-    <h3>الإدارة والتطوير: م. عبدالله حميد الصوفي</h3>
+    <p>الإدارة والتطوير: م. عبدالله حميد الصوفي</p>
 </div>
 """, unsafe_allow_html=True)
 
-# --- 4. القائمة الجانبية (Sidebar) ---
-st.sidebar.markdown("### ⚙️ إعدادات التوزيع")
-st.sidebar.info("قم بتعديل المعايير أدناه وسيتم إعادة الحساب فوراً")
+# --- 4. القائمة الجانبية (التحكم بالمعايير) ---
+st.sidebar.header("⚙️ ضبط معايير التوزيع")
+st.sidebar.markdown("قم بتغيير الأرقام أدناه لتحديد من يستحق وجبة، وجبتين، أو ثلاث.")
 
-# معيار الوجبتين
-limit_2_meals = st.sidebar.number_input(
-    "👨‍👩‍👧‍👦 يبدأ استحقاق (وجبتين) من عدد أفراد:",
-    min_value=1, value=6, step=1,
-    help="مثلاً: إذا اخترت 6، فإن أي أسرة عددها 6 أو أكثر ستحصل على وجبتين."
-)
-
-# معيار 3 وجبات
-limit_3_meals = st.sidebar.number_input(
-    "👨‍👩‍👧‍👦‍👦 يبدأ استحقاق (3 وجبات) من عدد أفراد:",
-    min_value=limit_2_meals + 1, value=10, step=1,
-    help="مثلاً: إذا اخترت 10، فإن أي أسرة عددها 10 أو أكثر ستحصل على 3 وجبات."
-)
-
+# --- قسم الوجبتين (يحدد تلقائياً نهاية الوجبة الواحدة) ---
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 📦 المخزون الاحتياطي")
+st.sidebar.subheader("1️⃣ فئة الوجبتين (2)")
+limit_2_meals = st.sidebar.number_input(
+    "يبدأ استحقاق الوجبتين من عدد أفراد:",
+    min_value=2, value=7, step=1,
+    help="أي عائلة عدد أفرادها يساوي هذا الرقم أو أكثر ستأخذ وجبتين."
+)
+# توضيح مباشر للمستخدم
+st.sidebar.info(f"✅ إذن: العائلات من 1 إلى {limit_2_meals - 1} أفراد تأخذ **وجبة واحدة**.")
+
+# --- قسم الـ 3 وجبات ---
+st.sidebar.markdown("---")
+st.sidebar.subheader("2️⃣ فئة الـ 3 وجبات")
+limit_3_meals = st.sidebar.number_input(
+    "يبدأ استحقاق الـ 3 وجبات من عدد أفراد:",
+    min_value=limit_2_meals + 1, value=11, step=1,
+    help="أي عائلة تصل لهذا العدد ستأخذ 3 وجبات."
+)
+# توضيح مباشر للمستخدم
+st.sidebar.info(f"✅ إذن: العائلات من {limit_2_meals} إلى {limit_3_meals - 1} أفراد تأخذ **وجبتين**.")
+st.sidebar.success(f"🌟 العائلات {limit_3_meals} أفراد فأكثر تأخذ **3 وجبات**.")
+
+# --- قسم الاحتياطي ---
+st.sidebar.markdown("---")
+st.sidebar.subheader("📦 الاحتياطي")
 reserve_meals = st.sidebar.number_input(
-    "عدد الوجبات الإضافية (احتياطي للمخيم):",
+    "عدد الوجبات الإضافية (للطوارئ):",
     min_value=0, value=0, step=5
 )
 
-# --- 5. معالجة الملف ---
+st.sidebar.markdown("---")
+st.sidebar.markdown("حقوق النشر محفوظة © 2026 \n م. عبدالله حميد الصوفي")
+
+# --- 5. التطبيق الرئيسي ---
 uploaded_file = st.file_uploader("📂 قم برفع ملف الإكسل (Excel) هنا", type=['xlsx', 'xls'])
 
 if uploaded_file:
@@ -136,7 +110,7 @@ if uploaded_file:
 
         if 'عدد الافراد' in df.columns:
             
-            # منطق الحساب
+            # دالة الحساب بناءً على المدخلات الجديدة
             def calculate_meals(row):
                 try:
                     size = int(row['عدد الافراد'])
@@ -152,124 +126,103 @@ if uploaded_file:
 
             df['عدد الوجبات المستحقة'] = df.apply(calculate_meals, axis=1)
 
-            # الإحصائيات
+            # الحسابات
             total_meals_families = df['عدد الوجبات المستحقة'].sum()
             grand_total = total_meals_families + reserve_meals
             total_families = len(df)
 
-            # --- عرض الإحصائيات ببطاقات ملونة (HTML Custom) ---
-            st.markdown("### 📊 ملخص التوزيع:")
+            # --- عرض البطاقات (Dashboard) ---
+            c1, c2, c3, c4 = st.columns(4)
             
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
+            with c1:
                 st.markdown(f"""
-                <div class="stat-card bg-total">
-                    <p>🚨 الإجمالي المطلوب</p>
-                    <h2>{grand_total}</h2>
+                <div class="metric-card border-red">
+                    <div class="metric-label">الإجمالي المطلوب (مع الاحتياطي)</div>
+                    <div class="metric-value">{grand_total}</div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with c2:
+                st.markdown(f"""
+                <div class="metric-card border-blue">
+                    <div class="metric-label">عدد العائلات</div>
+                    <div class="metric-value">{total_families}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            with c3:
+                st.markdown(f"""
+                <div class="metric-card border-green">
+                    <div class="metric-label">وجبات الأهالي فقط</div>
+                    <div class="metric-value">{total_meals_families}</div>
                 </div>
                 """, unsafe_allow_html=True)
                 
-            with col2:
-                st.markdown(f"""
-                <div class="stat-card bg-families">
-                    <p>👨‍👩‍👧‍👦 عدد العائلات</p>
-                    <h2>{total_families}</h2>
-                </div>
-                """, unsafe_allow_html=True)
-                
-            with col3:
-                st.markdown(f"""
-                <div class="stat-card bg-meals">
-                    <p>🍲 وجبات الأهالي</p>
-                    <h2>{total_meals_families}</h2>
-                </div>
-                """, unsafe_allow_html=True)
-                
-            with col4:
-                # لون الاحتياطي يختلف إذا كان صفر أو له قيمة
-                reserve_bg = "bg-reserve" if reserve_meals > 0 else "bg-families"
-                st.markdown(f"""
-                <div class="stat-card {reserve_bg}" style="color: #333;">
-                    <p>📦 الاحتياطي</p>
-                    <h2>{reserve_meals}</h2>
+            with c4:
+                 st.markdown(f"""
+                <div class="metric-card border-orange">
+                    <div class="metric-label">الاحتياطي المضاف</div>
+                    <div class="metric-value">{reserve_meals}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
-            # عرض المعايير الحالية
-            st.caption(f"ℹ️ النظام الحالي: (وجبتين) لمن هم {limit_2_meals} فأكثر | (3 وجبات) لمن هم {limit_3_meals} فأكثر")
+            st.markdown("### 📋 معاينة النتائج:")
             
-            st.divider()
+            # تجهيز الجدول للعرض
+            wanted_columns = ['الاسم رباعي', 'رقم الهوية', 'رقم الجوال', 'عدد الافراد', 'عدد الوجبات المستحقة', 'ملاحظات']
+            # إضافة باقي الأعمدة الموجودة في الملف الأصلي إذا لزم الأمر
+            existing_cols = [c for c in wanted_columns if c in df.columns]
+            # إذا أردت عرض كل الأعمدة مع التركيز على الوجبات
+            cols = existing_cols + [c for c in df.columns if c not in existing_cols]
+            st.dataframe(df[cols].head(10), use_container_width=True)
 
-            # تجهيز الجدول
-            wanted_columns = [
-                'الاسم رباعي', 'رقم الهوية', 'رقم الجوال', 'عدد الافراد',
-                'عدد الوجبات المستحقة',
-                'اسم الزوج/ـة', 'رقم هوية الزوج/ـة', 'ملاحظات الحالة',
-                'اسم مندوب المربع', 'اسم المخيم', 'اسم مندوب المخيم', 'ملاحظات'
-            ]
-            final_cols = [c for c in wanted_columns if c in df.columns]
-            df_export = df[final_cols].copy()
-
-            st.write("### 📋 معاينة الجدول:")
-            st.dataframe(df_export.head(5), use_container_width=True)
-
-            # --- تصدير الإكسل الملون ---
+            # --- التصدير للإكسل ---
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                sheet_name = 'كشف التوزيع'
-                df_export.to_excel(writer, index=False, sheet_name=sheet_name)
+                sheet_name = 'التوزيع النهائي'
+                # تصدير الأعمدة المختارة فقط ليكون الملف نظيفاً، أو استبدلها بـ df لتصدير الكل
+                export_cols = [c for c in ['الاسم رباعي', 'رقم الهوية', 'رقم الجوال', 'عدد الافراد', 'عدد الوجبات المستحقة', 'اسم الزوج/ـة', 'رقم هوية الزوج/ـة', 'ملاحظات الحالة', 'اسم مندوب المربع', 'اسم المخيم', 'اسم مندوب المخيم', 'ملاحظات'] if c in df.columns]
+                
+                df_final = df[export_cols]
+                df_final.to_excel(writer, index=False, sheet_name=sheet_name)
                 
                 workbook = writer.book
                 worksheet = writer.sheets[sheet_name]
                 worksheet.right_to_left()
                 
                 # التنسيقات
-                header_fmt = workbook.add_format({
-                    'bold': True, 'fg_color': '#1e3d59', 'font_color': 'white',
-                    'border': 1, 'align': 'center', 'valign': 'vcenter', 'font_size': 12
-                })
-                base_fmt = workbook.add_format({'border': 1, 'align': 'center', 'valign': 'vcenter'})
+                header_fmt = workbook.add_format({'bold': True, 'fg_color': '#2a5298', 'font_color': 'white', 'border': 1, 'align': 'center', 'valign': 'vcenter'})
+                cell_fmt = workbook.add_format({'border': 1, 'align': 'center', 'valign': 'vcenter'})
                 
-                # ألوان الخلايا (نفس ألوان الموقع تقريباً)
-                fmt_green = workbook.add_format({'bg_color': '#c8e6c9', 'font_color': '#1b5e20', 'border': 1, 'align': 'center'}) # أخضر فاتح
-                fmt_orange = workbook.add_format({'bg_color': '#ffcc80', 'font_color': '#e65100', 'border': 1, 'align': 'center'}) # برتقالي فاتح
-                
-                # تطبيق العناوين وتوسيع الأعمدة
-                for col_num, value in enumerate(df_export.columns.values):
+                # تنسيق العناوين
+                for col_num, value in enumerate(df_final.columns.values):
                     worksheet.write(0, col_num, value, header_fmt)
                     worksheet.set_column(col_num, col_num, 20)
 
                 # التلوين الشرطي
                 try:
-                    meal_col_idx = df_export.columns.get_loc('عدد الوجبات المستحقة')
-                    col_letter = chr(ord('A') + meal_col_idx)
-                    max_row = len(df_export) + 1
+                    meal_idx = df_final.columns.get_loc('عدد الوجبات المستحقة')
+                    col_char = chr(ord('A') + meal_idx)
+                    max_row = len(df_final) + 1
                     
                     # 3 وجبات = أخضر
-                    worksheet.conditional_format(f'{col_letter}2:{col_letter}{max_row}', {
-                        'type': 'cell', 'criteria': '>=', 'value': 3, 'format': fmt_green
-                    })
-                    # وجبتين = برتقالي
-                    worksheet.conditional_format(f'{col_letter}2:{col_letter}{max_row}', {
-                        'type': 'cell', 'criteria': '=', 'value': 2, 'format': fmt_orange
-                    })
-                    # وجبة واحدة = عادي
-                    worksheet.conditional_format(f'{col_letter}2:{col_letter}{max_row}', {
-                        'type': 'cell', 'criteria': '=', 'value': 1, 'format': base_fmt
-                    })
+                    worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '>=', 'value': 3, 'format': workbook.add_format({'bg_color': '#c8e6c9', 'font_color': '#006100', 'border': 1, 'align': 'center'})})
+                    # 2 وجبة = أصفر
+                    worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '=', 'value': 2, 'format': workbook.add_format({'bg_color': '#ffeb9c', 'font_color': '#9c6500', 'border': 1, 'align': 'center'})})
+                    # 1 وجبة = عادي
+                    worksheet.conditional_format(f'{col_char}2:{col_char}{max_row}', {'type': 'cell', 'criteria': '=', 'value': 1, 'format': cell_fmt})
                 except:
                     pass
 
             st.download_button(
-                label="📥 تحميل الكشف النهائي (Excel ملون وجاهز)",
+                label="📥 تحميل الكشف (Excel) جاهز وملون",
                 data=output.getvalue(),
-                file_name=f'توزيع_الكرامة_{grand_total}_وجبة.xlsx',
+                file_name=f'كشف_توزيع_الكرامة_{grand_total}_وجبة.xlsx',
                 mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )
 
         else:
-            st.error("⚠️ الملف لا يحتوي على عمود 'عدد الافراد'.")
+            st.error("⚠️ الملف المرفوع لا يحتوي على عمود 'عدد الافراد'. تأكد من صحة الملف.")
 
     except Exception as e:
         st.error(f"حدث خطأ: {e}")
@@ -277,7 +230,7 @@ if uploaded_file:
 # Footer
 st.markdown("""
 <div class="footer">
-    تم تطوير النظام لتسهيل خدمة أهلنا في مخيم الكرامة (أرض الشاعر) <br>
-    <b>جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026</b>
+    جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026 <br>
+    تم التطوير لخدمة مخيم الكرامة
 </div>
 """, unsafe_allow_html=True)
