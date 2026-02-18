@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. تنسيقات CSS الاحترافية (تم تحديث الفوتر) ---
+# --- 2. تنسيقات CSS العامة ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
@@ -26,8 +26,8 @@ st.markdown("""
         box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         margin-bottom: 30px;
     }
-    .main-header h1 { margin: 0; font-size: 2.5rem; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-    .dedication { font-size: 1.3rem; color: #ffd700; margin-top: 10px; font-weight: bold; }
+    .main-header h1 { margin: 0; font-size: 2.2rem; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    .dedication { font-size: 1.2rem; color: #ffd700; margin-top: 10px; font-weight: bold; }
     .developer { margin-top: 15px; font-size: 0.9rem; opacity: 0.8; }
 
     /* تنسيق البطاقات */
@@ -41,7 +41,7 @@ st.markdown("""
         transition: transform 0.2s;
     }
     .metric-card:hover { transform: translateY(-5px); }
-    .metric-value { font-size: 2.8rem; font-weight: bold; color: #333; }
+    .metric-value { font-size: 2.5rem; font-weight: bold; color: #333; }
     .metric-label { font-size: 1.1rem; color: #666; }
     
     /* ألوان الحدود */
@@ -50,37 +50,6 @@ st.markdown("""
     .border-green { border-color: #2ecc71; }
     .border-orange { border-color: #f39c12; }
 
-    /* تنسيق الفوتر الجديد (أزرار التواصل) */
-    .footer-container {
-        margin-top: 60px;
-        padding-top: 20px;
-        border-top: 2px dashed #ccc;
-        text-align: center;
-    }
-    .contact-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f8f9fa;
-        color: #333;
-        padding: 10px 20px;
-        margin: 10px;
-        border-radius: 50px;
-        text-decoration: none !important;
-        font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        border: 1px solid #e0e0e0;
-    }
-    .contact-btn:hover {
-        background-color: #e3f2fd;
-        color: #1565c0;
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-    }
-    .whatsapp { color: #25D366; margin-left: 8px; font-size: 1.2rem;}
-    .phone { color: #1e3c72; margin-left: 8px; font-size: 1.2rem;}
-    
 </style>
 """, unsafe_allow_html=True)
 
@@ -210,19 +179,21 @@ if uploaded_file:
     except Exception as e:
         st.error(f"حدث خطأ: {e}")
 
-# --- 6. الفوتر المحدث (تم الإصلاح) ---
+# --- 6. الفوتر المحدث (نسخة مضمونة) ---
+st.markdown("---")
 st.markdown("""
-<div class="footer-container">
-    <p style="color: #555; font-size: 1.1rem; margin-bottom: 15px;">
-        جميع الحقوق محفوظة للمطور: <b>م. عبدالله حميد الصوفي</b> © 2026
-    </p>
+<div style="text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 10px; margin-top: 20px; border: 1px solid #ddd;">
+    <h3 style="color: #1e3c72; font-family: 'Cairo', sans-serif;">جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026</h3>
+    <p style="color: #666; margin-bottom: 20px;">تم التطوير لخدمة لجنة فش فرش الشمالي</p>
     
-    <a href="https://wa.me/972567100000" target="_blank" class="contact-btn">
-        <span class="whatsapp">💬</span> &nbsp; واتساب: 00972567100000
-    </a>
-    
-    <a href="tel:0567100000" class="contact-btn">
-        <span class="phone">📞</span> &nbsp; جوال: 0567100000
-    </a>
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <a href="https://wa.me/972567100000" target="_blank" style="text-decoration: none; background-color: #25D366; color: white; padding: 10px 25px; border-radius: 30px; font-weight: bold; display: flex; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <span style="font-size: 1.2rem; margin-left: 8px;">💬</span> واتساب: 00972567100000
+        </a>
+        
+        <a href="tel:0567100000" style="text-decoration: none; background-color: #1e3c72; color: white; padding: 10px 25px; border-radius: 30px; font-weight: bold; display: flex; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <span style="font-size: 1.2rem; margin-left: 8px;">📞</span> جوال: 0567100000
+        </a>
+    </div>
 </div>
 """, unsafe_allow_html=True)
