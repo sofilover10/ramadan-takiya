@@ -2,79 +2,118 @@ import streamlit as st
 import pandas as pd
 import io
 
-# إعداد الصفحة
-st.set_page_config(page_title="توزيع التكية - فش فرش", layout="wide")
+# 1. تحسين الشكل الخارجي وإعدادات الصفحة
+st.set_page_config(
+    page_title="نظام توزيع التكية",
+    page_icon="🌙",
+    layout="wide"
+)
 
-# العنوان والشعار
-st.title("🌙 نظام توزيع التكية - مخيمات فش فرش الشمالي")
-st.write("---")
+# عنوان التطبيق في المنتصف
+st.markdown("<h1 style='text-align: center; color: #2e7bcf;'>🌙 نظام توزيع التكية - إدارة الوجبات</h1>", unsafe_allow_html=True)
+st.markdown("---")
 
-# دالة الحساب (القاعدة: أقل من 5 = 1، 5 وأكثر = 2)
-def calculate_meals(members):
-    try:
-        # تحويل القيمة لرقم والتأكد منها
-        val = float(members)
-        if val < 5:
-            return 1
-        else:
-            return 2
-    except:
-        return 0
+# 2. القائمة الجانبية (Sidebar) للتحكم في المعايير
+st.sidebar.header("⚙️ إعدادات التوزيع")
+st.sidebar.write("تحكم هنا في عدد الأفراد لكل فئة:")
+
+# تحديد الحد الأدنى للوجبتين (أنت تختار الرقم)
+limit_2_meals = st.sidebar.number_input(
+    "عدد الأفراد لاستحقاق وجبتين (2):",
+    min_value=1,
+    value=6,  # القيمة الافتراضية
+    help="أي عائلة عدد أفرادها يساوي أو أكبر من هذا الرقم ستحصل على وجبتين"
+)
+
+# تحديد الحد الأدنى لـ 3 وجبات (أنت تختار الرقم)
+limit_3_meals = st.sidebar.number_input(
+    "عدد الأفراد لاستحقاق 3 وجبات:",
+    min_value=1,
+    value=10, # القيمة الافتراضية
+    help="أي عائلة عدد أفرادها يساوي أو أكبر من هذا الرقم ستحصل على 3 وجبات"
+)
 
 # رفع الملف
-uploaded_file = st.file_uploader("📂 قم برفع ملف الإكسل (Excel أو CSV) هنا:", type=['xlsx', 'csv', 'xls'])
+uploaded_file = st.file_uploader("📂 قم برفع ملف الإكسل (يجب أن يحتوي على عمود 'عدد الافراد')", type=['xlsx', 'xls'])
 
 if uploaded_file is not None:
     try:
         # قراءة الملف
-        if uploaded_file.name.endswith('.csv'):
-            df = pd.read_csv(uploaded_file)
-        else:
-            df = pd.read_excel(uploaded_file)
-
-        # تنظيف أسماء الأعمدة لإزالة المسافات الزائدة
-        df.columns = df.columns.str.strip()
-
-        # البحث عن عمود عدد الأفراد (قد يختلف الاسم قليلًا)
-        possible_names = ['عدد الافراد', 'عدد الأفراد', 'عدد افراد الأسرة', 'عدد أفراد الأسرة']
-        col_name = None
-        for name in possible_names:
-            if name in df.columns:
-                col_name = name
-                break
+        df = pd.read_excel(uploaded_file)
         
-        if col_name:
-            # الحساب
-            df['عدد الوجبات المستحقة'] = df[col_name].apply(calculate_meals)
+        # التأكد من وجود عمود عدد الأفراد
+        if 'عدد الافراد' in df.columns:
+            
+            # --- 3. المنطق الجديد للحساب بناءً على اختيارك ---
+            def calculate_meals(row):
+                family_size = row['عدد الافراد']
+                
+                # التعامل مع القيم الفارغة أو غير الرقمية
+                try:
+                    family_size = int(family_size)
+                except:
+                    return 0 # إذا كان الرقم خطأ يرجع 0
+                
+                # تطبيق المعايير التي اخترتها في القائمة الجانبية
+                if family_size >= limit_3_meals:
+                    return 3
+                elif family_size >= limit_2_meals:
+                    return 2
+                else:
+                    return 1
 
-            # عرض النتائج
+            # تطبيق الدالة
+            df['عدد الوجبات المستحقة'] = df.apply(calculate_meals, axis=1)
+            
+            # --- عرض الإحصائيات بشكل جميل ---
+            total_meals = df['عدد الوجبات المستحقة'].sum()
+            total_families = len(df)
+            
+            col1, col2, col3 = st.columns(3)
+            col1.metric("إجمالي الوجبات المطلوبة", f"{total_meals} وجبة")
+            col2.metric("عدد العائلات", f"{total_families} عائلة")
+            col3.metric("معيار الوجبتين", f"من {limit_2_meals} أفراد فأكثر")
+
             st.success("✅ تم الحساب بنجاح!")
             
-            # إحصائيات سريعة
-            total_families = len(df)
-            total_meals = df['عدد الوجبات المستحقة'].sum()
-            
-            c1, c2 = st.columns(2)
-            c1.metric("عدد العائلات", total_families)
-            c2.metric("مجموع الوجبات المطلوبة", f"{total_meals} وجبة")
-
             # عرض الجدول
             st.dataframe(df)
-
-            # زر التحميل
+            
+            # --- 4. التحضير للتحميل (Excel Report) ---
             output = io.BytesIO()
-            # حفظ كملف Excel
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, index=False, sheet_name='Sheet1')
+                df.to_excel(writer, index=False, sheet_name='توزيع الوجبات')
+                
+                # تنسيق الملف ليظهر بشكل جميل عند الفتح
+                workbook = writer.book
+                worksheet = writer.sheets['توزيع الوجبات']
+                header_format = workbook.add_format({
+                    'bold': True,
+                    'text_wrap': True,
+                    'valign': 'top',
+                    'fg_color': '#D7E4BC',
+                    'border': 1
+                })
+                # تطبيق التنسيق على الأعمدة
+                for col_num, value in enumerate(df.columns.values):
+                    worksheet.write(0, col_num, value, header_format)
+                    worksheet.set_column(col_num, col_num, 15) # توسيع الأعمدة
+
+            processed_data = output.getvalue()
             
             st.download_button(
-                label="📥 تحميل الملف جاهز مع الوجبات (Excel)",
-                data=output.getvalue(),
-                file_name=f"توزيع_رمضان_{uploaded_file.name}.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                label="📥 تحميل التقرير (Excel جاهز للطباعة)",
+                data=processed_data,
+                file_name=f'تقرير_توزيع_الوجبات_{total_meals}_وجبة.xlsx',
+                mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )
+            
         else:
-            st.error("⚠️ لم يتم العثور على عمود باسم 'عدد الافراد'. تأكد من اسم العمود في الملف.")
-
+            st.error("⚠️ عذراً، الملف لا يحتوي على عمود باسم 'عدد الافراد'. تأكد من كتابة الاسم بدقة.")
+            
     except Exception as e:
-        st.error(f"حدث خطأ: {e}")
+        st.error(f"حدث خطأ أثناء قراءة الملف: {e}")
+
+# تذييل الصفحة
+st.markdown("---")
+st.markdown("<p style='text-align: center; color: grey;'>تم التطوير للمساعدة في أعمال الخير</p>", unsafe_allow_html=True)
