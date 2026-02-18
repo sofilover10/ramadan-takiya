@@ -51,7 +51,28 @@ st.markdown("""
     .border-green { border-color: #2ecc71; }
     .border-orange { border-color: #f39c12; }
 
-    .footer { text-align: center; margin-top: 40px; padding: 20px; color: #777; font-size: 0.9rem; border-top: 1px solid #e0e0e0; }
+    /* تنسيق الفوتر (التذييل) */
+    .footer { 
+        text-align: center; 
+        margin-top: 50px; 
+        padding: 30px; 
+        background-color: #ffffff;
+        border-top: 1px solid #e0e0e0; 
+        border-radius: 15px 15px 0 0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+    .footer p { margin: 5px 0; color: #555; }
+    .contact-info { margin-top: 15px; }
+    .contact-link { 
+        text-decoration: none; 
+        margin: 0 10px; 
+        font-weight: bold; 
+        display: inline-block;
+        transition: color 0.3s;
+    }
+    .whatsapp-link { color: #25D366; }
+    .phone-link { color: #1e3c72; }
+    .contact-link:hover { opacity: 0.8; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -178,7 +199,6 @@ if uploaded_file:
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 sheet_name = 'التوزيع النهائي'
-                # تصدير الأعمدة المهمة
                 export_cols = [c for c in ['الاسم رباعي', 'رقم الهوية', 'رقم الجوال', 'عدد الافراد', 'عدد الوجبات المستحقة', 'اسم الزوج/ـة', 'رقم هوية الزوج/ـة', 'ملاحظات الحالة', 'اسم مندوب المربع', 'اسم المخيم', 'اسم مندوب المخيم', 'ملاحظات'] if c in df.columns]
                 
                 df_final = df[export_cols]
@@ -225,10 +245,20 @@ if uploaded_file:
     except Exception as e:
         st.error(f"حدث خطأ: {e}")
 
-# Footer
+# --- الفوتر الجديد مع التواصل ---
 st.markdown("""
 <div class="footer">
-    جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026 <br>
-    تم التطوير لخدمة لجنة فش فرش الشمالي
+    <p>جميع الحقوق محفوظة للمطور: <b>م. عبدالله حميد الصوفي</b> © 2026</p>
+    <p>تم التطوير لخدمة لجنة فش فرش الشمالي</p>
+    
+    <div class="contact-info">
+        <a href="https://wa.me/972567100000" target="_blank" class="contact-link whatsapp-link">
+            💬 واتساب: 00972567100000
+        </a>
+        <span style="color: #ccc;">|</span>
+        <a href="tel:0567100000" class="contact-link phone-link">
+            📞 جوال: 0567100000
+        </a>
+    </div>
 </div>
 """, unsafe_allow_html=True)
