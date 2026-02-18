@@ -184,6 +184,7 @@ st.markdown("---")
 st.markdown("""
 <div style="text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 10px; margin-top: 20px; border: 1px solid #ddd;">
     <h3 style="color: #1e3c72; font-family: 'Cairo', sans-serif;">جميع الحقوق محفوظة للمطور: م. عبدالله حميد الصوفي © 2026</h3>
-    <p style="color: #666; margin: 0;">تم التطوير لخدمة لجنة فش فرش الشمالي</p>
+    <p style="color: #666; margin-bottom: 5px;">تم التطوير لخدمة لجنة فش فرش الشمالي</p>
+    <p style="color: #444; font-weight: bold; margin: 0;">📱 0567100000</p>
 </div>
 """, unsafe_allow_html=True)
